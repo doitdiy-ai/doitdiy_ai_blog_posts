@@ -1,107 +1,75 @@
 ---
-title: "pi-boot-and-encrypt"
-date: "2024-10-31"
-excerpt: "Easy script to configure Rapberry Pi 4 Encryption."
+title: "Introducing Our New Next.js Blogging System with Tailwind CSS"
+date: "2024-09-28"
+excerpt: "A look at our sleek and efficient new blogging system built with Next.js and Tailwind CSS, designed for fast, responsive, and visually appealing content delivery."
 category: "Web Development"
-tags: ["Next.js", "Tailwind CSS", "Blogging", "GitHub","Raspberry Pi 4","Encryption","Filesystem Encryption"]
-coverImage: "https://raw.githubusercontent.com/doitdiy-ai/doitdiy_ai_blog_posts/refs/heads/main/default-cover.jpg"
-authorImage: "https://raw.githubusercontent.com/doitdiy-ai/doitdiy_ai_blog_posts/refs/heads/main/doitdiyai.png"
+tags: ["Next.js", "Tailwind CSS", "Blogging", "GitHub"]
+coverImage: "https://raw.githubusercontent.com/Dicklesworthstone/yto_blog_posts/refs/heads/main/blog_01_banner.webp"
+author: "Jeffrey Emanuel"
+authorImage: "https://pbs.twimg.com/profile_images/1225476100547063809/53jSWs7z_400x400.jpg"
+authorBio: "Software Engineer and Founder of YouTube Transcript Optimizer"
 ---
 
-# pi-boot-and-encrypt
+# Introducing Our New Next.js Blogging System with Tailwind CSS
 
-#### Prepare a Raspberry Pi OS SD card before first boot on a Windows PC.
+## A Sleek and Efficient Way to Share Your Thoughts
 
-This is a 100% script-based way to prepare an SD card that has a freshly installed Raspberry Pi image to run headless. It'll enable WiFi, SSH, VNC, hostname(s), filesystem encryption, etc.
-It only uses the FAT32 */boot* partition on the SD card or the .img file. You don't need to change anything about the ext4 (Linux) partition. And, it is done with just PowerShell. Check out [this blog post](https://doitdiy.ai/2021/06/20/raspberry-pi-automated-setup-with-full-disk-encryption/) or read on below to get it going
+![Blog System Banner](https://raw.githubusercontent.com/Dicklesworthstone/yto_blog_posts/refs/heads/main/blog_01_banner.webp)
 
-##### How to use it
+Hello, fellow developers and tech enthusiasts! Today, I'm excited to introduce our brand new blogging system built with Next.js and styled with Tailwind CSS. This powerful combination allows for a fast, responsive, and visually appealing blog that's easy to maintain and expand.
 
-It only needs the *boot-config.ps1* file. You'll need a freshly imaged SD card with Raspberry Pi OS (use Raspberry Pi imager from raspberrypi.org), and make sure it is inserted in the card reader connected to a PC. After downloading script, right-click and select 'Run with Powershell'. If you get a request for confirmation, select Yes (it's always recommended to check out any scripts before running them).
+### Key Features
 
-In the window that pops up, do the following:
-- Select the drive that has the SD Cards
-- Enter a new password for the pi user (up to you, later on in the boot process, you'll be forced to change it)
-- Enter a password to log on during the initial boot process to initially encrypt the main file system and later to unlock that encrypted file system
-- Enter the WiFi ssid that you'll want the Raspberry Pi to connect to
-- Enter the WiFi passcode
-- Enter the hostname you want to use for the raspberry pi (example: raspi8gb)
-- Enter the hostname you want to use for during unlocking of the encrypted filesystem (example: raspi8gb.crypt)
-- If needed, modify the timezone and language-country settings
+1. **GitHub-Powered Content**: All our blog posts are stored as Markdown files in a public GitHub repository. This means version control and collaboration are built right in!
 
-After that, hit the *Configure* button. Then eject the SD card, pop it in your Raspberry Pi and turn it on. While not necessary, it'll be helpful at this point to have a screen connected to the Raspberry Pi, so you can see what is going on.
+2. **Automatic Updates**: The system periodically checks for new Markdown files in the repo, ensuring that new posts are automatically added to the blog without manual intervention.
 
-##### The four boots
+3. **Responsive Design**: Thanks to Tailwind CSS, our blog looks great on devices of all sizes. From mobile phones to wide-screen desktops, the reading experience is always optimal.
 
-- First boot:
-  - __No action needs to be taken__, the activities below all happen in the background.
-  - Enable SSH, VNC, copy public keys to the sd card, set the hostname, enable camera, set screen do_resolution
-  - Set the timezone (to Central...), locale, keyboard layout
-  - Set the pi password (note, no plaintext password here. Password is included as a md5crypt hash), set the password to expired (so at first login, the user has to enter a new password) and lock the user account (it'll be unlocked later on)
-  - Move some bash scripts to the ext4 main file system and set up the first bash script to run after the first reboot
-  - Reboot
-- Second boot
-  - __Still no actions need to be taken__, the below activities also happen in the background, but they will take some time (about 5 minutes), so __be patient__.
-  - __The pi user still cannot log on during this boot sequence__.
-  - The pre_encrypt shell script runs during this phase.
-  - It's main task is to set up initramfs and dropbear
-  - Initramfs is a small file system that will run at boot up. Once the main file system is encrypted, initramfs is needed to be able to unlock the main file system before you can boot into that.
-  - Dropbear is a small SSH server that needs to be added to initramfs, so you can connect to it using SSH (keeping everything headless)
-  - The creation of initramfs takes about 4 minutes, hence the long wait.
-  - After it completes, the Raspberry Pi will reboot again.
-- Third boot
-  - Now, the Raspberry Pi will boot into initramfs, where we'll prepare the main filesystem for encryption
-  - Give it a few minutes for this boot to complete and the Raspberry Pi to connect to your WiFi network
-  - Connect to it using SSH and using the encrypt hostname (raspi8gbcrypt in my example above). On the Windows PC, in a cmd window enter:
+4. **Fast Loading**: Next.js's static site generation capabilities mean that our blog pages load incredibly quickly, providing a smooth user experience.
 
-    >ssh root<span>@</span>raspi8gbcrypt.lan -p 23
-  - The initramfs SSH port is set to 23 (which officially is the telnet port..). This is done to keep the server signature checks that are done by the windows SSH clients separate when logging in to either initramfs vs. the main filesystem
-  - After running the SSH command above, you'll be:
-    - Logged in right away (meaning your SSH keys were not passphrase protected, which is not advisable)
-    - You'll be asked for a passphrase (which is the passphrase of your SSH key). If you don't know this passphrase, just hit Enter, and it'll ask for your password next
-    - It'll ask for the password. This would be the password you entered in the powershell window in the 'Decrypt password' field
-  - Now that you're logged in, type:
+5. **Rich Markdown Support**: We support GitHub Flavored Markdown, allowing for a wide range of formatting options. Let's test some of them:
 
-    > encrypt
-  - It'll start up the encrypt.sh script, which does the steps needed to encrypt the main file system.
-  - Some steps are time-consuming. In particular creating a backup of the file system before encryption, and then copying that backup into the encrypted file system, will take about 5 minutes each.
-  - After filesystem checks, reduction of the filesystem and the creation of a backup, the script will ask you for confirmation to created the encrypted filesystem and then you'll need to enter a passphrase. __Make it a strong passphrase and remember it!__ This passphrase provides protection against decryption of the main file system.
-  - After the main file system is encrypted, you'll have to enter that passphrase to unlock it. After that, the backup of the main file system is copied back into the main file system. Again, this'll take about 4 - 5 minutes.
-  - Then, system will reboot into the main file system
-- Fourth boot
-  - This is the final boot. The post_encrypt shell script will run here. It's main activity is to update the initramfs with the changes made after the third boot.
-  - __The pi user is still locked__, as this step needs to complete first (or.. at least, it can't be interrupted by a user doing a reboot while the update is still running).
-  - After the initramfs update completes, the pi user will be unlocked. Connect with SSH, this time using the hostname entered in the 'Hostname' field in the powershell script. In the example case that would be:
+   - *Italic* and **bold** text
+   - [Links to external sites](https://nextjs.org)
+   - Lists (like this one!)
+   - And even code blocks:
 
-    > ssh pi<span>@</span>raspi8gb.lan
-  - As above one of three things can happen:
-     - Logged in right away (meaning your SSH keys were not passphrase protected, which is definitely not advisable)
-     - You'll be asked for a passphrase (which is the passphrase of your SSH key). If you don't know this passphrase, just hit Enter, and it'll ask for your password next
-     - It'll ask for the password. This would be the password you entered in the powershell window in the 'Pi Password' field
-  - After either of these, you'll be prompted to change the password of the pi user
+     ```javascript
+     const getBlogPosts = async () => {
+       const response = await fetch('https://api.github.com/repos/user/blog-posts/contents');
+       const files = await response.json();
+       return files.filter(file => file.name.endsWith('.md'));
+     };
+     ```
 
-This completes the full setup, including the encryption of the main file system.
+6. **SEO Optimized**: Each blog post comes with customizable metadata, ensuring that our content is easily discoverable by search engines.
 
-#### Normal Usage
-The above is all a one-time setup. In normal usage, when the Raspberry Pi is rebooted, the process to get it fully running is as follows:
-- Start the Raspberry Pi
-- Wait a while to give it time to connect to the WiFi Network
-- Connect via ssh to the Raspberry Pi:
+### How It Works
 
-  > ssh root<span>@</span>raspi8gbcrypt.lan -p 23
-- After you're logged in, type:
+Our blogging system leverages the power of Next.js's API routes and static site generation. Here's a simplified overview of the process:
 
-  > cryptroot-unlock
-- It'll ask for the unlock passphrase that you originally entered during the third boot phase. After that, it'll unlock the main file system and reboot.
-- When the reboot completes, you can SSH in:
+1. Markdown files are added to our GitHub repository.
+2. Our Next.js app periodically fetches the list of files from the GitHub API.
+3. When a new file is detected, the app fetches its content and processes the Markdown.
+4. The processed content is then rendered using our custom React components, styled with Tailwind CSS.
+5. Next.js generates static pages for each blog post, ensuring fast load times.
 
-  > ssh pi<span>@</span>raspi8gb.lan
+### What's Next?
 
-Or, you can VNC into the Raspberry Pi.
+We're constantly working on improving our blogging system. Some features we're considering for future updates include:
 
-One note about hostnames: in my WiFi network, I need to add .lan when doing SSH or VNC to the hostnames I entered in the powershell script. This may be different in different set ups. It could be .local instead of .lan, or... you may have to find out the IP address (easiest way to do that is to use the Fing app on a phone that is connected to the same WiFi network).
+- Comment system integration
+- Social media sharing buttons
+- Dark mode toggle
+- RSS feed generation
 
-#### But what about encrypting an existing filesystem?
-I recommend you start with a freshly imaged SD card as described above. But... I have been able to do the encryption setup on an SD card that was not 'freshly' imaged and that had been used for other activities. So... you can try, but understand there is a chance you lose all data on the SD card. As with anything written here, no guarantees...
+## Conclusion
 
-That should be about it!
+This new blogging system represents a significant step forward in our content management capabilities. It combines the simplicity of Markdown with the power of modern web technologies to create a blogging experience that's enjoyable for both writers and readers.
+
+We're excited to use this system for sharing more updates, tutorials, and thoughts with you all. Stay tuned for more posts coming soon!
+
+---
+
+*This post was written in Markdown and automatically rendered by our Next.js blogging system. Pretty cool, huh?*
