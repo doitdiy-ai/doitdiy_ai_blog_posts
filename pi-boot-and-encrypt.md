@@ -4,6 +4,7 @@ date: "2024-10-31"
 excerpt: "Easy script to configure Rapberry Pi 4 Encryption."
 category: "Web Development"
 tags: ["Next.js", "Tailwind CSS", "Blogging", "GitHub","Raspberry Pi 4","Encryption","Filesystem Encryption"]
+coverImage: "https://github.com/doitdiy-ai/doitdiy_ai_blog_posts/blob/main/default-cover.jpg?raw=true"
 ---
 
 # pi-boot-and-encrypt
